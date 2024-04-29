@@ -1,0 +1,118 @@
+|- src
+    |- main
+        |- java
+            |- com
+                |- kdelectronics
+                    |- Producto.java
+                    |- ProductoDAO.java
+                    |- JDBCUtils.java
+                    |- Main.java
+
+package com.kdelectronics;
+
+public class Producto {
+    private int id;
+    private String codigoProducto;
+    private String nombre;
+    private String descripcion;
+    private double precioBase;
+    private double precioVenta;
+    private String categoria;
+    private int cantidadDisponible;
+
+    // Constructor, getters y setters
+}
+
+package com.kdelectronics;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProductoDAO {
+    private Connection conexion;
+
+    public ProductoDAO(Connection conexion) {
+        this.conexion = conexion;
+    }
+
+    public List<Producto> obtenerTodosLosProductos() throws SQLException {
+        List<Producto> productos = new ArrayList<>();
+        String consulta = "SELECT * FROM Productos";
+
+        try (PreparedStatement stmt = conexion.prepareStatement(consulta);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Producto producto = new Producto();
+                producto.setId(rs.getInt("id"));
+                producto.setCodigoProducto(rs.getString("codigo_producto"));
+                producto.setNombre(rs.getString("nombre"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setPrecioBase(rs.getDouble("precio_base"));
+                producto.setPrecioVenta(rs.getDouble("precio_venta"));
+                producto.setCategoria(rs.getString("categoria"));
+                producto.setCantidadDisponible(rs.getInt("cantidad_disponible"));
+                productos.add(producto);
+            }
+        }
+
+        return productos;
+    }
+
+    // Otros métodos para insertar, actualizar y eliminar productos
+}
+
+package com.kdelectronics;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class JDBCUtils {
+    private static final String URL = "jdbc:mysql://localhost:3306/KDElectronics";
+    private static final String USUARIO = "tu_usuario";
+    private static final String CONTRASEÑA = "tu_contraseña";
+
+    public static Connection obtenerConexion() throws SQLException {
+        return DriverManager.getConnection(URL, USUARIO, CONTRASEÑA);
+    }
+
+    public static void cerrarConexion(Connection conexion) {
+        if (conexion != null) {
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+package com.kdelectronics;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        try (Connection conexion = JDBCUtils.obtenerConexion()) {
+            ProductoDAO productoDAO = new ProductoDAO(conexion);
+
+            // Obtener todos los productos
+            List<Producto> productos = productoDAO.obtenerTodosLosProductos();
+
+            // Imprimir los productos
+            for (Producto producto : productos) {
+                System.out.println(producto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
