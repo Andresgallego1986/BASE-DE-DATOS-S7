@@ -1,0 +1,33 @@
+-- Crear la base de datos KDElectronics si no existe
+CREATE DATABASE IF NOT EXISTS KDElectronics;
+
+-- Usar la base de datos KDElectronics
+USE KDElectronics;
+
+-- Crear la tabla Productos
+CREATE TABLE IF NOT EXISTS Productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_producto VARCHAR(50) UNIQUE NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    precio_base DECIMAL(10, 2) NOT NULL,
+    precio_venta DECIMAL(10, 2) NOT NULL,
+    categoria VARCHAR(50),
+    cantidad_disponible INT NOT NULL
+);
+
+-- Insertar algunos datos de ejemplo
+INSERT INTO Productos (codigo_producto, nombre, descripcion, precio_base, precio_venta, categoria, cantidad_disponible) 
+VALUES 
+('PROD001', 'Smartphone Samsung Galaxy S20', 'Teléfono inteligente de última generación', 800.00, 999.99, 'Smartphones', 50),
+('PROD002', 'Smart TV LG 55"', 'Televisor inteligente con resolución 4K', 1200.00, 1499.99, 'Electrónica', 30),
+('PROD003', 'Auriculares inalámbricos Sony WH-1000XM4', 'Auriculares con cancelación de ruido', 250.00, 299.99, 'Accesorios', 100);
+
+-- Consultar todos los productos
+SELECT * FROM Productos;
+
+-- Consultar productos de una categoría específica (por ejemplo, 'Smartphones')
+SELECT * FROM Productos WHERE categoria = 'Smartphones';
+
+-- Consultar productos con precio de venta superior a 1000
+SELECT * FROM Productos WHERE precio_venta > 1000;
